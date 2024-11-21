@@ -1,8 +1,26 @@
 ###
-POST http://localhost:3000/auth/signup
+POST http://localhost:3001/auth/signup
 Content-Type: application/json
 
 {
-  "email": "test@gmail.com",
+  "email": "lamtailoi123@gmail.com",
   "password": "123456"
+}
+
+###
+GET http://localhost:3001/auth/1
+
+
+###
+GET http://localhost:3001/auth?email=lamtailoi123@gmail.com
+
+###
+DELETE http://localhost:3001/auth/4
+
+###
+PATCH  http://localhost:3001/auth/7
+Content-Type: application/json
+
+{
+  "email": "toi0hackdau@gmail.com"
 }

@@ -9,8 +9,12 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer';
 
+interface ClassConstructor {
+  new (...args: any[]): {};
+}
+
 // Create a decorator to use the SerializeInterceptor
-export function Serialize(dto: any) {
+export function Serialize(dto: ClassConstructor) {
   return UseInterceptors(new SerializeInterceptor(dto));
 }
 
@@ -23,6 +27,7 @@ export class SerializeInterceptor implements NestInterceptor {
     return handler.handle().pipe(
       map((data: any) => {
         // Run before sending the response
+        // covert to json
         return plainToClass(this.dto, data, {
           // Execute only the fields with Expose()
           excludeExtraneousValues: true,
