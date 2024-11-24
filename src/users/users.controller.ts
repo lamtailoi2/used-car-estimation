@@ -7,25 +7,53 @@ import {
   Param,
   Query,
   Delete,
+  Session,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user-dto';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
+import { AuthService } from './auth.service';
+import { UsersService } from './users.service';
+import { UserEntity } from './user.entity';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
 @Controller('/auth')
+@Serialize(UserDto)
 export class UsersController {
-  constructor(private usersService: UsersService) {}
-  @Post('/signup')
-  async createUser(@Body() body: CreateUserDto) {
-    const { email, password } = body;
-    if (!email || !password) {
-      throw new Error('Email and password must be provided');
-    }
-    return this.usersService.create(email, password);
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
+
+  @Get('/me')
+  @UseGuards(AuthGuard)
+  async getCurrentUser(@CurrentUser() user: UserEntity) {
+    return user;
   }
 
-  @Serialize(UserDto)
+  @Post('/signup')
+  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+    const { email, password } = body;
+    const user = await this.authService.signUp(email, password);
+    session.userId = 1;
+    return user;
+  }
+
+  @Post('/signin')
+  async signIn(@Body() body: CreateUserDto, @Session() session: any) {
+    const { email, password } = body;
+    const user = await this.authService.signIn(email, password);
+    session.userId = user.id;
+    return user;
+  }
+
+  @Get('/signout')
+  signOut(@Session() session: any) {
+    session.userId = null;
+  }
+
   @Get('/:id')
   async findUser(@Param('id') id: string) {
     return this.usersService.findOne(parseInt(id));

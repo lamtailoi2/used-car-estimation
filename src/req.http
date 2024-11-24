@@ -3,9 +3,19 @@ POST http://localhost:3001/auth/signup
 Content-Type: application/json
 
 {
-  "email": "lamtailoi123@gmail.com",
+  "email": "lamtailoi151@gmail.com",
   "password": "123456"
 }
+
+###
+POST http://localhost:3001/auth/signin
+Content-Type: application/json
+
+{
+  "email": "lamtailoi151@gmail.com",
+  "password": "123456"
+}
+
 
 ###
 GET http://localhost:3001/auth/1
@@ -24,3 +34,9 @@ Content-Type: application/json
 {
   "email": "toi0hackdau@gmail.com"
 }
+
+###
+GET http://localhost:3001/auth/me
+
+###
+GET http://localhost:3001/auth/signout

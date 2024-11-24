@@ -6,6 +6,9 @@ import { ReportsModule } from './reports/reports.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './users/user.entity';
 import { ReportsEntity } from './reports/reports.entity';
+import { CurrentUserInterceptor } from './users/interceptors/current-user.decorator';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -18,6 +21,12 @@ import { ReportsEntity } from './reports/reports.entity';
     ReportsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CurrentUserInterceptor,
+    },
+  ],
 })
 export class AppModule {}
